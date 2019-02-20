@@ -13,7 +13,7 @@ library(xtable)
 data_to_model = read_csv("travis_leavers.csv")
 data_to_model$left_travis = (data_to_model$abandoned_and_alive == 1)
 
-target_ci = read_csv("./data/cleaned_commit_status_context.csv")
+target_ci = read_csv("./cleaned_commit_status_context.csv")
 nrow(target_ci)
 names(target_ci)
 table(target_ci$error) # error = 1 means abandoned all CIs
