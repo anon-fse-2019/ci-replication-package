@@ -2,7 +2,7 @@
 Anonymous Replication Package for FSE 2019 CI Submission
 
 ## Observations and Interview Questions
-To allow other researchers to confirm observations from our literature review which were out of scope for our study, the full list of observations is provided in the `pdf` document included here. We also provide our interview protocol used for the 12 semistructured interviews in the same document, incase future researchers wish to use a similar protocol. 
+To allow other researchers to confirm observations from our literature review which were out of scope for our study, the full list of observations is provided in the `pdf` document included here. We also provide our interview protocol used for the 12 semistructured interviews in the same document, should future researchers wish to use a similar protocol. 
 
 ## Model and Data
 To allow other researchers to critique our model or reanalyize our dataset, we provide and document it here. 
