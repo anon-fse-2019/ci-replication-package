@@ -1,5 +1,4 @@
-# ci-replication-package
-Anonymous Replication Package for FSE 2019 CI Submission
+# Replication Package for `Integrating and Testing the Literature:A Conceptual Replication of Continuous Integration Pain Points`, FSE 2019
 
 ## Observations and Interview Questions
 To allow other researchers to confirm observations from our literature review which were out of scope for our study, the full list of observations is provided in the `pdf` document included here. We also provide our interview protocol used for the 12 semistructured interviews in the same document, should future researchers wish to use a similar protocol. 
