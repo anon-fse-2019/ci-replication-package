@@ -13,7 +13,7 @@ library(xtable)
 data_to_model = read_csv("travis_leavers.csv")
 data_to_model$left_travis = (data_to_model$abandoned_and_alive == 1)
 
-target_ci = read_csv("commit_status_context.csv")
+target_ci = read_csv("./data/cleaned_commit_status_context.csv")
 nrow(target_ci)
 names(target_ci)
 table(target_ci$error) # error = 1 means abandoned all CIs
@@ -63,6 +63,10 @@ table(abandoners_to_model$low_activity)
 table(abandoners_to_model$docker)
 table(abandoners_to_model$influenced)
 
+hist(abandoners_to_model$rebuild_fraction)
+hist(log(abandoners_to_model[abandoners_to_model$rebuild_fraction<=0.12,]$rebuild_fraction+1))
+table(abandoners_to_model$rebuild_fraction == 0)
+
 # Model abandoners
 logit_abandoners <- glm(left_travis  ~
                           log(project_age) +
@@ -73,24 +77,28 @@ logit_abandoners <- glm(left_travis  ~
                           log(PRs+1) +
                           log(number_of_test_files+1) +
                           has_long_builds + # Projects with more trivial builds and long builds likely to abandon
-                          new_user *
+                          # new_user *
                           lang_supported + # Non supported langauges more likely to abandon
                           commercial + # Projects with significant commercial email involvement (3rd quartile) from one company(!) more likely to abandon
                           influenced + # If they connect to a previously abandoning project, they're more likely to abandon themselves.
                           new_user *
                           docker +
-                          has_rebuilds +
+                          # has_rebuilds +
+                          scale(log(rebuild_fraction+1)) +
                           low_activity,
                         data = subset(abandoners_to_model, 
-                                      job_count<=30 & 
-                                        number_of_test_files<=500),
+                                      job_count <= 30 
+                                      & number_of_test_files <= 500
+                                      & rebuild_fraction <= 0.12),
                         family = "binomial"
 )
 
 summary(logit_abandoners)
 pR2(logit_abandoners)
 vif(logit_abandoners)
-Anova(logit_abandoners, type=2)
+anova(logit_abandoners)
+# Anova(logit_abandoners, type=2)
+plot(logit_abandoners)
 
 
 ## Second, model switchers (changed tools)
@@ -130,6 +138,7 @@ summary(switchers_to_model$number_of_test_files)
 table(switchers_to_model$number_of_test_files > 500)
 hist(log(subset(switchers_to_model, job_count<=30 & number_of_test_files<=500)$number_of_test_files+1))
 table(switchers_to_model$has_rebuilds)
+hist(log(switchers_to_model[switchers_to_model$rebuild_fraction <= 0.12,]$rebuild_fraction+1))
 table(switchers_to_model$low_activity)
 table(switchers_to_model$docker)
 table(switchers_to_model$influenced)
@@ -144,24 +153,28 @@ logit_switchers <- glm(left_travis  ~
                           log(PRs+1) +
                           log(number_of_test_files+1) +
                           has_long_builds + # Projects with more trivial builds and long builds likely to abandon
-                          new_user *
+                          # new_user *
                           lang_supported + # Non supported langauges more likely to abandon
                           commercial + # Projects with significant commercial email involvement (3rd quartile) from one company(!) more likely to abandon
                           influenced + # If they connect to a previously abandoning project, they're more likely to abandon themselves.
                           new_user *
                           docker +
-                          has_rebuilds +
+                          # has_rebuilds +
+                          scale(log(rebuild_fraction+1)) +
                           low_activity,
                         data = subset(switchers_to_model, 
-                                      job_count<=30 & 
-                                        number_of_test_files<=500),
+                                      job_count <= 30 
+                                      & number_of_test_files <= 500
+                                      & rebuild_fraction <= 0.12),
                         family = "binomial"
 )
 
 summary(logit_switchers)
 pR2(logit_switchers)
 vif(logit_switchers)
-Anova(logit_switchers, type=2)
+# Anova(logit_switchers, type=2)
+anova(logit_switchers)
+plot(logit_switchers)
 
 
 ## Export model summaries
